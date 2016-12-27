@@ -1,0 +1,6 @@
+name: KololoK
+version: 1.0
+author: ZocDev by Filip Zocktan
+website: http://zcktn.ga
+main: ga.zcktn.kololok.main.KololoK
+commands:
