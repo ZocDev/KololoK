@@ -1,0 +1,10 @@
+name: KololoK
+version: 1.2
+author: ZocDev by Filip Zocktan
+website: http://zcktn.ga
+main: ga.zcktn.kololok.main.KololoK
+commands:
+  tobergmann:
+    description: Makes you to Herr Bergmann!
+  koloreset:
+    description: Resets Passed Events and Dialoges
