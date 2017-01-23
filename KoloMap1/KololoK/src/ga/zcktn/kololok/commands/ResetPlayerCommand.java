@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 import ga.zcktn.kololok.eventlistener.PlayerMoveListener;
 
 public class ResetPlayerCommand implements CommandExecutor {
-	ArrayList<String> removeIds = new ArrayList<>();
+	ArrayList<String> removeIds = new ArrayList<String>();
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

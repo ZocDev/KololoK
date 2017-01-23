@@ -1,7 +1,5 @@
 package ga.zcktn.kololok.resource.enums;
 
-import java.util.Locale;
-
 public enum EnumChallenge {
 
 	RealLabor1("LAB1"),
@@ -26,28 +24,34 @@ public enum EnumChallenge {
 	}
 	
 	public EnumChallenge getbyKuerzel(String kuerzel){
-		switch (kuerzel.toUpperCase(Locale.GERMAN)) {
-		default:
-			return null;
-		case "LAB1":
+		if(kuerzel.toUpperCase().equals("LAB1")) {
 			return EnumChallenge.RealLabor1;
-		case "SPY":
+		}
+		if(kuerzel.toUpperCase().equals("SPY")) {
 			return EnumChallenge.RealLabor2;
-		case "SPYREADY":
+		}
+		if(kuerzel.toUpperCase().equals("SPYREADY")) {
 			return EnumChallenge.RealLabor3;
-		case "SM":
+		}
+		if(kuerzel.toUpperCase().equals("SM")) {
 			return EnumChallenge.Leben;
-		case "SWIMM":
+		}
+		if(kuerzel.toUpperCase().equals("INSEL")) {
 			return EnumChallenge.LebenzuInsel;
-		case "INSEL":
+		}
+		if(kuerzel.toUpperCase().equals("VARO")) {
 			return EnumChallenge.Insel;
-		case "ZUG":
+		}
+		if(kuerzel.toUpperCase().equals("ZUG")) {
 			return EnumChallenge.Heilanstalt;
-		case "GUCK":
+		}
+		if(kuerzel.toUpperCase().equals("GUCK")) {
 			return EnumChallenge.Freedom1;
-		case "RODEO":
+		}
+		if(kuerzel.toUpperCase().equals("RODEO")) {
 			return EnumChallenge.Desperado;
 		}
+		return null;
 	}
 	
 }

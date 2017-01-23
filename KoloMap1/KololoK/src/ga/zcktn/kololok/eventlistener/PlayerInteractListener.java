@@ -1,8 +1,6 @@
 package ga.zcktn.kololok.eventlistener;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,9 +20,12 @@ import ga.zcktn.kololok.main.KololoK;
 
 public class PlayerInteractListener implements Listener {
 
-	List<Player> canshoot = new LinkedList<>();
+	HashMap<Player, BukkitRunnable> isReloading = new HashMap<Player, BukkitRunnable>();
 	private KololoK plugin;
-
+	String prefix = "§3[§4KololoK§3] ";
+	boolean manuelReloading = false;
+	int pistol_maxAmmu = 25;
+	
 	public PlayerInteractListener(KololoK plugin) {
 		this.plugin = plugin;
 	}
@@ -33,20 +34,34 @@ public class PlayerInteractListener implements Listener {
 	public void onInteract(PlayerInteractEvent ev) {
 		Player p = ev.getPlayer();
 		try {
-			if (p.getWorld().getName().equals("KololoK")) {
-				if (p.getItemInHand().getType() == Material.STONE_SPADE) {
+			if(p.getWorld().getName().equals("KololoK")) {
+				if(p.getItemInHand().getType() == Material.STONE_SPADE) {
 					switch (ev.getAction()) {
 					case LEFT_CLICK_AIR:
-						reloadGun(p);
+						if(manuelReloading)
+							if(getAmmu(p) != pistol_maxAmmu) {
+								reloadGun(p);
+							}
 						break;
 					case LEFT_CLICK_BLOCK:
-						reloadGun(p);
+						if(manuelReloading)
+							if(getAmmu(p) != pistol_maxAmmu) {
+								reloadGun(p);
+							}
 						break;
 					case RIGHT_CLICK_AIR:
-						shoot(p, p.getItemInHand());
+						if(!isReloading.containsKey(p)) {
+							shoot(p, p.getItemInHand());
+						} else {
+							p.sendMessage(prefix+"§2Du lädst gerade nach");
+						}
 						break;
 					case RIGHT_CLICK_BLOCK:
-						shoot(p, p.getItemInHand());
+						if(!isReloading.containsKey(p)) {
+							shoot(p, p.getItemInHand());
+						} else {
+							p.sendMessage(prefix+"§2Du lädst gerade nach");
+						}
 						break;
 					case PHYSICAL:
 						break;
@@ -54,12 +69,12 @@ public class PlayerInteractListener implements Listener {
 						break;
 					}
 				}
-				if (ev.getClickedBlock().getType() == Material.OBSIDIAN) {
-					if (ev.getClickedBlock().getLocation().getWorld()
+				if(ev.getClickedBlock().getType() == Material.OBSIDIAN) {
+					if(ev.getClickedBlock().getLocation().getWorld()
 							.getBlockAt(ev.getClickedBlock().getLocation().getBlockX(), 205,
 									ev.getClickedBlock().getLocation().getBlockZ())
 							.getType() == Material.COAL_BLOCK) {
-						if (ev.getClickedBlock().getLocation().getWorld()
+						if(ev.getClickedBlock().getLocation().getWorld()
 								.getBlockAt(ev.getClickedBlock().getLocation().getBlockX(), 206,
 										ev.getClickedBlock().getLocation().getBlockZ())
 								.getType() == Material.SIGN_POST) {
@@ -68,69 +83,115 @@ public class PlayerInteractListener implements Listener {
 									ev.getClickedBlock().getLocation().getBlockZ());
 							Sign s = (Sign) b.getState();
 							if (s.getLine(0).equalsIgnoreCase("[kololok]")) {
-								switch (s.getLine(1).toUpperCase(Locale.GERMANY)) {
-								default:
-									break;
-								case "CLICK1":
+								if(s.getLine(1).toUpperCase().equals("CLICK1")) {
 									p.teleport(new Location(Bukkit.getWorld("KololoK"), 20, 36, -146));
+								}else{
+									return;
 								}
 							}
 						}
 					}
 				}
+			} else {
+				
 			}
 		} catch (Exception e) {
 		}
 	}
-
-	private void reloadGun(Player p) {
-		if (p.getInventory().contains(Material.SNOW_BALL)) {
-			ItemMeta imWaffe = p.getItemInHand().getItemMeta();
-			imWaffe.setDisplayName("§cRevolver §6[§425§6]");
-			canshoot.add(p);
-			final Player player = p;
-			BukkitRunnable r = new BukkitRunnable() {
+	
+	private int getAmmu(Player p) {
+		int Schuss = -1;
+		String name = p.getItemInHand().getItemMeta().getDisplayName();
+		name = name.replace("§4", "");
+		name = name.replace("§6", "");
+		name = name.replace("§c", "");
+		name = name.replace(" ", "");
+		name = name.replace("]", "");
+		name = name.replace("[", "");
+		name = name.replace("Revolver", "");
+		try {
+			Schuss = Integer.parseInt(name);
+		} catch (Exception ex) {
+			p.sendMessage("Error!");
+		}
+		return Schuss;
+	}
+	
+	private void reloadGun(final Player p) {
+		if(isReloading.containsKey(p)) {
+			return;
+		}
+		if(p.getInventory().contains(Material.SNOW_BALL)) {
+			ItemStack[] magazines = p.getInventory().getContents();
+			int slot = 0;
+			for(ItemStack i : magazines) {
+				if(i.getType() == Material.SNOW_BALL) {
+					int amount = i.getAmount();
+					amount--;
+					if(amount != 0) {
+						i.setAmount(amount);
+						magazines[slot] = i;
+					} else {
+						magazines[slot] = new ItemStack(Material.AIR);
+					}
+					break;
+				}
+				slot++;
+			}
+			p.getInventory().setContents(magazines);
+			p.getWorld().playSound(p.getLocation(), Sound.BLAZE_BREATH, 1, 1);
+			
+			isReloading.put(p, new BukkitRunnable() {
 
 				@Override
 				public void run() {
-					canshoot.remove(player);
+					ItemMeta imWaffe = p.getItemInHand().getItemMeta();
+					imWaffe.setDisplayName("§cRevolver §6[§4"+pistol_maxAmmu+"§6]");
+					ItemStack item = p.getItemInHand();
+					item.setItemMeta(imWaffe);
+					p.setItemInHand(item);
+					isReloading.get(p).cancel();
+					isReloading.remove(p);
 				}
-			};
-			r.runTaskLater(plugin, 20);
+				
+			});
+			isReloading.get(p).runTaskLater(this.plugin, 44);
+		} else {
+			p.playSound(p.getLocation(), Sound.ANVIL_BREAK, 1, 1);
+			p.sendMessage(prefix+"§2Du hast kein weiteres Magazin im Inventar");
 		}
 	}
-
 	@SuppressWarnings("deprecation")
 	private void shoot(final Player p, ItemStack inHand) {
-		if (!canshoot.contains(p)) {
-			p.sendMessage("msg");
-			int Schuss = -1;
-			String SchussString = inHand.getItemMeta().getDisplayName().split("[")[1];
-			SchussString = SchussString.replaceAll("§4", "");
-			SchussString = SchussString.replaceAll("§6", "");
-			SchussString = SchussString.replaceAll(" ", "");
-			SchussString = SchussString.replaceAll("]", "");
-			try {
-				Schuss = Integer.parseInt(SchussString);
-			} catch (Exception ex) {
-				p.sendMessage("Error!");
+		int Schuss = -1;
+		String name = inHand.getItemMeta().getDisplayName();
+		name = name.replace("§4", "");
+		name = name.replace("§6", "");
+		name = name.replace("§c", "");
+		name = name.replace(" ", "");
+		name = name.replace("]", "");
+		name = name.replace("[", "");
+		name = name.replace("Revolver", "");
+		try {
+			Schuss = Integer.parseInt(name);
+		} catch (Exception ex) {
+			p.sendMessage("Error!");
+		}
+		if(Schuss >= 1) {
+			Schuss--;
+			ItemMeta imWaffe = p.getItemInHand().getItemMeta();
+			imWaffe.setDisplayName("§cRevolver §6[§4"+Schuss+"§6]");
+			inHand.setItemMeta(imWaffe);
+			p.setItemInHand(inHand);
+			p.shootArrow();
+			p.getWorld().playSound(p.getLocation(), Sound.SHOOT_ARROW, 1, 1);
+			if(manuelReloading == false) {
+				if(Schuss == 0) {
+					reloadGun(p);
+				}
 			}
-			p.sendMessage(Schuss + "");
-			if (Schuss != 0) {
-				canshoot.add(p);
-				p.shootArrow();
-				p.getWorld().playSound(p.getLocation(), Sound.SHOOT_ARROW, 1, 1);
-				BukkitRunnable r = new BukkitRunnable() {
-
-					@Override
-					public void run() {
-						canshoot.remove(p);
-					}
-				};
-				r.runTaskLater(plugin, 4);
-			} else {
-				p.sendMessage("§3[§4KololoK§3] §2Du musst nachladen!");
-			}
+		} else {
+			p.sendMessage(prefix+"§2Du musst nachladen!");
 		}
 	}
 

@@ -24,47 +24,43 @@ public class Challenge {
 	public void checkChallenge() {
 		
 		PluginManager pm = Bukkit.getServer().getPluginManager();
-		
-		switch (signText.toUpperCase(Locale.GERMAN)) {
-		default:
-			break;
-		case "LAB1":
+		if(signText.toUpperCase().equals("LAB1")) {
 			TitleManager.sendTitle("§2Wo sind wir?", "§3Antwort in den Chat!", 1, 3, 1, p);
 			pm.callEvent(new StartChallengeEvent(p, EnumChallenge.RealLabor1));
-			break;
-		case "SPY":
+		}
+		if(signText.toUpperCase().equals("SPY")) {
 			TitleManager.sendTitle("§3Schau dich gut um!", "§4Du wirst es brauchen...", 1, 3, 1, p);
-			break;
-		case "SPYREADY":
+		}
+		if(signText.toUpperCase().equals("SPYREADY")) {
 			TitleManager.sendTitle("", "§4Hast du dich fertig umgeschaut?", 1, 3, 1, p);
 			pm.callEvent(new StartChallengeEvent(p, EnumChallenge.RealLabor3));
-			break;
-		case "SM":
+		}
+		if(signText.toUpperCase().equals("SM")) {
 			TitleManager.sendTitle("§2Wo sind wir nun?", "§3Antwort in den Chat!", 1, 3, 1, p);
 			pm.callEvent(new StartChallengeEvent(p, EnumChallenge.Leben));
-			break;
-		case "SWIMM":
+		}
+		if(signText.toUpperCase().equals("SWIMM")) {
 			TitleManager.sendTitle("§4SCHWIMM!!", "", 1, 3, 1, p);
-			break;
-		case "INSEL":
+		}
+		if(signText.toUpperCase().equals("INSEL")) {
 			TitleManager.sendTitle("§2Welches Projekt ist das hier?", "§3Antwort in den Chat!", 1, 3, 3, p);
 			pm.callEvent(new StartChallengeEvent(p, EnumChallenge.Insel));
-			break;
-		case "VARO":
+		}
+		if(signText.toUpperCase().equals("VARO")) {
 			TitleManager.sendTitle("Wasn das hier?", "Antwort in den Chat", 1, 3, 1, p);
 			pm.callEvent(new StartChallengeEvent(p,EnumChallenge.Varo3));
-		case "ZUG":
+		}
+		if(signText.toUpperCase().equals("ZUG")) {
 			TitleManager.sendTitle("§2Wo sind wir denn hier gelandet?", "§3Antwort in den Chat!", 1, 3, 1, p);
 			pm.callEvent(new StartChallengeEvent(p, EnumChallenge.Heilanstalt));
-			break;
-		case "GUCK":
+		}
+		if(signText.toUpperCase().equals("GUCK")) {
 			TitleManager.sendTitle("§3Guck mal was passiert!", "", 1, 3, 1, p);
 			pm.callEvent(new StartChallengeEvent(p, EnumChallenge.Freedom1));
-			break;
-		case "RODEO":
+		}
+		if(signText.toUpperCase().equals("RODEO")) {
 			TitleManager.sendTitle("§2Wo waren wir denn da?", "§3Antwort in den Chat!", 1, 3, 1, p);
 			pm.callEvent(new StartChallengeEvent(p, EnumChallenge.Desperado));
-			break;
 		}
 		
 	}

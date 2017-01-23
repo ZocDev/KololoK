@@ -19,7 +19,7 @@ import ga.zcktn.kololok.resource.enums.EnumChallenge;
 
 public class PlayerMoveListener implements Listener {
 
-	public static List<String> wasbefore = new LinkedList<>();
+	public static List<String> wasbefore = new LinkedList<String>();
 	EnumChallenge c = EnumChallenge.Desperado;
 
 	@EventHandler

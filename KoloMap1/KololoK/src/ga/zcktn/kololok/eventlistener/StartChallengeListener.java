@@ -22,43 +22,17 @@ public class StartChallengeListener implements Listener {
 		EnumChallenge c = ev.getEnumChallenge();
 		String kuerzel = c.getKuerzel();
 		Player p = ev.getPlayer();
-		switch (kuerzel.toUpperCase(Locale.GERMANY)) {
-		default:
-			break;
-		case "LAB1":
+		if(kuerzel.toUpperCase().equals("LAB1") ||
+				kuerzel.toUpperCase().equals("SM") ||
+				kuerzel.toUpperCase().equals("INSEL") ||
+				kuerzel.toUpperCase().equals("VARO") ||
+				kuerzel.toUpperCase().equals("ZUG") ||
+				kuerzel.toUpperCase().equals("GUCK") ||
+				kuerzel.toUpperCase().equals("RODEO")) {
 			istchallenged.add(p);
 			challenges.put(p, c);
 			p.setWalkSpeed(0);
-			break;
-		case "SM":
-			istchallenged.add(p);
-			challenges.put(p, c);
-			p.setWalkSpeed(0);
-			break;
-		case "INSEL":
-			istchallenged.add(p);
-			challenges.put(p, c);
-			p.setWalkSpeed(0);
-			break;
-		case "VARO":
-			istchallenged.add(p);
-			challenges.put(p, c);
-			p.setWalkSpeed(0);
-		case "ZUG":
-			istchallenged.add(p);
-			challenges.put(p, c);
-			p.setWalkSpeed(0);
-			break;
-		case "GUCK":
-			istchallenged.add(p);
-			challenges.put(p, c);
-			p.setWalkSpeed(0);
-			break;
-		case "RODEO":
-			istchallenged.add(p);
-			challenges.put(p, c);
-			p.setWalkSpeed(0);
-			break;
+			return;
 		}
 	}
 
